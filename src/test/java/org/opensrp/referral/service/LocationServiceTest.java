@@ -2,6 +2,7 @@ package org.opensrp.referral.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +18,7 @@ public class LocationServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        locationService = new LocationService();
+        locationService = new LocationService("https://demo.openmrs.org/openmrs","admin","Admin123");
     }
 
     @Test
@@ -33,5 +34,14 @@ public class LocationServiceTest {
         Assert.assertEquals("Madona", councilFacilities.get(1).getName());
         Assert.assertEquals("Mnazi Mmoja", councilFacilities.get(2).getName());
 
+    }
+
+    @Test
+    public void getAllLocations() {
+        try {
+            Assert.assertTrue(locationService.getAllLocations().size()>0);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
