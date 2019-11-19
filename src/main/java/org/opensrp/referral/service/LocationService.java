@@ -25,6 +25,13 @@ public class LocationService extends OpenmrsLocationService {
 
     private static Logger logger = LoggerFactory.getLogger(OpenmrsLocationService.class);
 
+    public LocationService() {
+    }
+
+    public LocationService(String openmrsUrl, String user, String password) {
+        super(openmrsUrl, user, password);
+    }
+
     private String getURL(String url) {
         Request request = (new Request.Builder()).url(url).addHeader("Authorization", Credentials.basic(this.OPENMRS_USER, this.OPENMRS_PWD)).build();
         OkHttpClient client = new OkHttpClient();
