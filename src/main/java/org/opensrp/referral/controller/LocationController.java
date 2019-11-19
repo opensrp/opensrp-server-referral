@@ -22,17 +22,12 @@ public class LocationController {
         this.locationService = locationService;
     }
 
-    @RequestMapping("location-tree")
+
+    @RequestMapping("district-facilities/{uuid}")
     @ResponseBody
-    public ResponseEntity<String> getLocationTree() throws JSONException {
-
-
-        return new ResponseEntity<>(new Gson().toJson(locationService.getLocationTree()), HttpStatus.OK);
+    public ResponseEntity<String> getLocationTree(@PathVariable("uuid") final String uuid) throws JSONException {
+        return new ResponseEntity<>(new Gson().toJson(locationService.getHealthFacilityLocationsInCouncil(uuid)), HttpStatus.OK);
     }
 
-    @RequestMapping("location-tree/{uuid}")
-    @ResponseBody
-    public ResponseEntity<String> getLocationTree(@PathVariable("uuid") String uuid) throws JSONException {
-        return new ResponseEntity<>(new Gson().toJson(locationService.getLocationTreeOf(uuid)), HttpStatus.OK);
-    }
+
 }
