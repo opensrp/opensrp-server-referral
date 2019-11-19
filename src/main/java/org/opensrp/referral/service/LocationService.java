@@ -49,12 +49,12 @@ public class LocationService extends OpenmrsLocationService {
     }
 
     public List<Location> getHealthFacilityLocationsInCouncil(String uuid) throws JSONException {
-        List<Location> allLocationsList = getAllLocation();
+        List<Location> allLocationsList = getAllLocations();
         logger.error(new Gson().toJson(allLocationsList));
         return getCouncilFacilities(uuid, allLocationsList);
     }
 
-    public List<Location> getAllLocation() throws JSONException {
+    public List<Location> getAllLocations() throws JSONException {
         String response = this.getURL(HttpUtil.removeEndingSlash(this.OPENMRS_BASE_URL) + "/" + "ws/rest/v1/location" + "?v=custom:(uuid,display,name,tags:(uuid,display),parentLocation:(uuid,display),attributes)");
         logger.info("response received : " + response);
         if (!StringUtils.isEmptyOrWhitespaceOnly(response) && (new JSONObject(response)).has("results")) {
