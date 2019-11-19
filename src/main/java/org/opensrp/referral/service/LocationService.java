@@ -23,9 +23,6 @@ public class LocationService extends OpenmrsLocationService {
 
     private static Logger logger = LoggerFactory.getLogger(OpenmrsLocationService.class);
 
-    public LocationService() {
-    }
-
     public LocationService(String openmrsUrl, String user, String password) {
         super(openmrsUrl, user, password);
     }
