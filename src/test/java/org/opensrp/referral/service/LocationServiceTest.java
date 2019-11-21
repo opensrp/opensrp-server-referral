@@ -9,12 +9,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.opensrp.api.domain.Location;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @RunWith(JUnit4.class)
 public class LocationServiceTest {
     public LocationService locationService;
+    Logger logger = LoggerFactory.getLogger(LocationServiceTest.class);
 
     @Before
     public void setUp() throws Exception {
@@ -39,9 +42,18 @@ public class LocationServiceTest {
     @Test
     public void getAllLocations() {
         try {
-            Assert.assertTrue(locationService.getAllLocations().size()>0);
+            Assert.assertTrue(locationService.getAllLocations().size() > 0);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
+//    @Test
+//    public void getFacilitiesInACouncil() {
+//        try {
+//            logger.info("Facilities in Council = "+locationService.getHealthFacilityLocationsInCouncil("village/ward/facility uuid"));
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

@@ -134,7 +134,7 @@ public class LocationService extends OpenmrsLocationService {
         REGION("Region"),
         COUNCIL("Council"),
         WARD("Ward"),
-        VILLAGE("village"),
+        VILLAGE("Village"),
         FACILITY("Facility");
 
         private final String display;
