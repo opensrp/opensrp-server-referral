@@ -23,7 +23,14 @@ public class LocationController {
     }
 
 
-    @RequestMapping("district-facilities/{uuid}")
+    /**
+     * This method receives the uuid of a facility location that team member (chw) is tied up to
+     * or a uuid of a village that team member is serving and return a list of all other facilities within the district/council of the uuid
+     * @param  uuid uuid of a facility or a village.
+     * @return List of all facilities within the same district/council.
+     */
+
+    @RequestMapping("council-facilities/{uuid}")
     @ResponseBody
     public ResponseEntity<String> getLocationTree(@PathVariable("uuid") final String uuid) throws JSONException {
         return new ResponseEntity<>(new Gson().toJson(locationService.getHealthFacilityLocationsInCouncil(uuid)), HttpStatus.OK);

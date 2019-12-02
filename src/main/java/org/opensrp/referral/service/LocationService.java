@@ -38,8 +38,8 @@ public class LocationService extends OpenmrsLocationService {
             if (!StringUtils.isEmptyOrWhitespaceOnly(responseBody)) {
                 return responseBody;
             }
-        } catch (IOException var7) {
-            logger.error(var7.getMessage(), var7);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
         }
 
         return null;
@@ -69,12 +69,12 @@ public class LocationService extends OpenmrsLocationService {
     private Location makeLocation(String locationJson) throws JSONException {
         logger.info("makeLocation: " + locationJson);
         JSONObject obj = new JSONObject(locationJson);
-        Location p = this.getParent(obj);
-        Location l = new Location(obj.getString("uuid"), obj.getString("name"), null, null, p, null, null);
-        JSONArray t = obj.getJSONArray("tags");
+        Location patentLocation = this.getParent(obj);
+        Location location = new Location(obj.getString("uuid"), obj.getString("name"), null, null, patentLocation, null, null);
+        JSONArray tags = obj.getJSONArray("tags");
 
-        for (int i = 0; i < t.length(); ++i) {
-            l.addTag(t.getJSONObject(i).getString("display"));
+        for (int i = 0; i < tags.length(); ++i) {
+            location.addTag(tags.getJSONObject(i).getString("display"));
         }
 
         JSONArray a = obj.getJSONArray("attributes");
@@ -83,10 +83,10 @@ public class LocationService extends OpenmrsLocationService {
             boolean voided = a.getJSONObject(i).optBoolean("voided");
             if (!voided) {
                 String ad = a.getJSONObject(i).getString("display");
-                l.addAttribute(ad.substring(0, ad.indexOf(":")), ad.substring(ad.indexOf(":") + 2));
+                location.addAttribute(ad.substring(0, ad.indexOf(":")), ad.substring(ad.indexOf(":") + 2));
             }
         }
-        return l;
+        return location;
     }
 
     public List<Location> getCouncilFacilities(String uuid, List<Location> allLocations) {
@@ -115,10 +115,10 @@ public class LocationService extends OpenmrsLocationService {
 
     private List<Location> getFacilitiesByCouncilId(String uuid, List<Location> allLocations) {
         List<Location> facilitiesLocations = new ArrayList<>();
-        for (Location l : allLocations) {
+        for (Location location : allLocations) {
             try {
-                if (l.getParentLocation().getLocationId().equals(uuid) && l.getTags().contains(LocationService.AllowedTags.FACILITY.toString())) {
-                    facilitiesLocations.add(l);
+                if (location.getParentLocation().getLocationId().equals(uuid) && location.getTags().contains(LocationService.AllowedTags.FACILITY.toString())) {
+                    facilitiesLocations.add(location);
                 }
             } catch (NullPointerException e) {
                 logger.error(e.getMessage());
