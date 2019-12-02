@@ -30,9 +30,9 @@ public class LocationController {
      * @return List of all facilities within the same district/council.
      */
 
-    @RequestMapping("council-facilities/{uuid}")
+    @RequestMapping("facilities/{uuid}")
     @ResponseBody
-    public ResponseEntity<String> getLocationTree(@PathVariable("uuid") final String uuid) throws JSONException {
+    public ResponseEntity<String> getFacilitiesWithinACouncil(@PathVariable("uuid") final String uuid) throws JSONException {
         return new ResponseEntity<>(new Gson().toJson(locationService.getHealthFacilityLocationsInCouncil(uuid)), HttpStatus.OK);
     }
 
