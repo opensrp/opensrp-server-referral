@@ -77,12 +77,12 @@ public class LocationService extends OpenmrsLocationService {
             location.addTag(tags.getJSONObject(i).getString("display"));
         }
 
-        JSONArray a = obj.getJSONArray("attributes");
+        JSONArray attributes = obj.getJSONArray("attributes");
 
-        for (int i = 0; i < a.length(); ++i) {
-            boolean voided = a.getJSONObject(i).optBoolean("voided");
+        for (int i = 0; i < attributes.length(); ++i) {
+            boolean voided = attributes.getJSONObject(i).optBoolean("voided");
             if (!voided) {
-                String ad = a.getJSONObject(i).getString("display");
+                String ad = attributes.getJSONObject(i).getString("display");
                 location.addAttribute(ad.substring(0, ad.indexOf(":")), ad.substring(ad.indexOf(":") + 2));
             }
         }
