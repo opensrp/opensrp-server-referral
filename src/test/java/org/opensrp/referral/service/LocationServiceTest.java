@@ -9,15 +9,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.opensrp.api.domain.Location;
+import org.opensrp.connector.openmrs.service.OpenmrsLocationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @RunWith(JUnit4.class)
 public class LocationServiceTest {
-    public LocationService locationService;
+
+    private static Logger logger = LoggerFactory.getLogger(OpenmrsLocationService.class);
+    private LocationService locationService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         locationService = new LocationService("https://demo.openmrs.org/openmrs","admin","Admin123");
     }
 
@@ -39,9 +44,9 @@ public class LocationServiceTest {
     @Test
     public void getAllLocations() {
         try {
-            Assert.assertTrue(locationService.getAllLocations().size() > 0);
+            Assert.assertFalse(locationService.getAllLocations().isEmpty());
         } catch (JSONException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 }

@@ -36,5 +36,4 @@ public class LocationController {
         return new ResponseEntity<>(new Gson().toJson(locationService.getHealthFacilityLocationsInCouncil(uuid)), HttpStatus.OK);
     }
 
-
 }

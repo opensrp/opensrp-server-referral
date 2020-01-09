@@ -27,7 +27,32 @@ public class LocationService extends OpenmrsLocationService {
         super(openmrsUrl, user, password);
     }
 
-    private String getURL(String url) {
+    public List<Location> getHealthFacilityLocationsInCouncil(String uuid) throws JSONException {
+        List<Location> allLocationsList = getAllLocations();
+        String locationsJson = new Gson().toJson(allLocationsList);
+        logger.error(locationsJson);
+        return getCouncilFacilities(uuid, allLocationsList);
+    }
+
+    public List<Location> getAllLocations() throws JSONException {
+        String response = this.obtainURL(HttpUtil.removeEndingSlash(this.OPENMRS_BASE_URL) + "/" + "ws/rest/v1/location" +
+                "?v=custom:(uuid,display,name,tags:(uuid,display),parentLocation:(uuid,display),attributes)");
+
+        logger.info("response received : {} ", response);
+
+        if (!StringUtils.isEmptyOrWhitespaceOnly(response) && (new JSONObject(response)).has("results")) {
+            List<Location> allLocations = new ArrayList<>();
+            JSONArray results = new JSONObject(response).getJSONArray("results");
+            for (int i = 0; i < results.length(); i++) {
+                allLocations.add(formLocation(results.getJSONObject(i).toString()));
+            }
+            return allLocations;
+
+        }
+        return new ArrayList<>();
+    }
+
+    private String obtainURL(String url) {
         Request request = (new Request.Builder()).url(url).addHeader("Authorization", Credentials.basic(this.OPENMRS_USER, this.OPENMRS_PWD)).build();
         OkHttpClient client = new OkHttpClient();
         Call call = client.newCall(request);
@@ -45,32 +70,12 @@ public class LocationService extends OpenmrsLocationService {
         return null;
     }
 
-    public List<Location> getHealthFacilityLocationsInCouncil(String uuid) throws JSONException {
-        List<Location> allLocationsList = getAllLocations();
-        logger.error(new Gson().toJson(allLocationsList));
-        return getCouncilFacilities(uuid, allLocationsList);
-    }
-
-    public List<Location> getAllLocations() throws JSONException {
-        String response = this.getURL(HttpUtil.removeEndingSlash(this.OPENMRS_BASE_URL) + "/" + "ws/rest/v1/location" + "?v=custom:(uuid,display,name,tags:(uuid,display),parentLocation:(uuid,display),attributes)");
-        logger.info("response received : " + response);
-        if (!StringUtils.isEmptyOrWhitespaceOnly(response) && (new JSONObject(response)).has("results")) {
-            List<Location> allLocations = new ArrayList<>();
-            JSONArray results = new JSONObject(response).getJSONArray("results");
-            for (int i = 0; i < results.length(); i++) {
-                allLocations.add(makeLocation(results.getJSONObject(i).toString()));
-            }
-            return allLocations;
-
-        }
-        return null;
-    }
-
-    private Location makeLocation(String locationJson) throws JSONException {
-        logger.info("makeLocation: " + locationJson);
+    private Location formLocation(String locationJson) throws JSONException {
+        logger.info("makeLocation: {}", locationJson);
         JSONObject obj = new JSONObject(locationJson);
-        Location patentLocation = this.getParent(obj);
-        Location location = new Location(obj.getString("uuid"), obj.getString("name"), null, null, patentLocation, null, null);
+        Location parentLocation = this.getParent(obj);
+        Location location = new Location(obj.getString("uuid"), obj.getString("name"),
+                null, null, parentLocation, null, null);
         JSONArray tags = obj.getJSONArray("tags");
 
         for (int i = 0; i < tags.length(); ++i) {
@@ -83,7 +88,7 @@ public class LocationService extends OpenmrsLocationService {
             boolean voided = attributes.getJSONObject(i).optBoolean("voided");
             if (!voided) {
                 String ad = attributes.getJSONObject(i).getString("display");
-                location.addAttribute(ad.substring(0, ad.indexOf(":")), ad.substring(ad.indexOf(":") + 2));
+                location.addAttribute(ad.substring(0, ad.indexOf(':')), ad.substring(ad.indexOf(':') + 2));
             }
         }
         return location;
@@ -96,19 +101,19 @@ public class LocationService extends OpenmrsLocationService {
                 .collect(Collectors.toList());
         Location location;
 
-        //if the filtered list is empty return empty list
-        if (filteredList.size() > 0) {
+        if (!filteredList.isEmpty()) {
             location = filteredList.get(0);
         } else {
             return new ArrayList<>();
         }
 
-        if (location.getTags().contains(AllowedTags.VILLAGE.toString()) || location.getTags().contains(AllowedTags.WARD.toString()) || location.getTags().contains(AllowedTags.FACILITY.toString())) {
+        if (location.getTags().contains(AllowedTags.VILLAGE.toString()) || location.getTags().contains(
+                AllowedTags.WARD.toString()) || location.getTags().contains(AllowedTags.FACILITY.toString())) {
             return getCouncilFacilities(location.getParentLocation().getLocationId(), allLocations);
         } else if (location.getTags().contains(AllowedTags.COUNCIL.toString())) {
             return getFacilitiesByCouncilId(location.getLocationId(), allLocations);
         } else {
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -143,6 +148,7 @@ public class LocationService extends OpenmrsLocationService {
             this.display = display;
         }
 
+        @Override
         public String toString() {
             return this.display;
         }
