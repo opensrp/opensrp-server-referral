@@ -11,7 +11,6 @@ import org.opensrp.common.util.HttpUtil;
 import org.opensrp.connector.openmrs.service.OpenmrsLocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,7 +22,9 @@ public class ReferralLocationService extends OpenmrsLocationService {
 
     private static Logger logger = LoggerFactory.getLogger(OpenmrsLocationService.class);
 
-    @Autowired
+    public ReferralLocationService() {
+    }
+
     public ReferralLocationService(String openmrsUrl, String user, String password) {
         super(openmrsUrl, user, password);
     }
@@ -97,7 +98,7 @@ public class ReferralLocationService extends OpenmrsLocationService {
 
     public List<Location> getCouncilFacilities(String uuid, List<Location> allLocations) {
 
-        List<Location> filteredList =  new ArrayList<>();
+        List<Location> filteredList = new ArrayList<>();
         for (Location allLocation : allLocations) {
             if (allLocation.getLocationId().contains(uuid)) {
                 filteredList.add(allLocation);
