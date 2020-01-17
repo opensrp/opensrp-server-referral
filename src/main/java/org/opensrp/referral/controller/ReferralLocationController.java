@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/location/")
-public class LocationController {
+public class ReferralLocationController {
 
     private ReferralLocationService referralLocationService;
 
     @Autowired
-    public LocationController(ReferralLocationService referralLocationService) {
+    public ReferralLocationController(ReferralLocationService referralLocationService) {
         this.referralLocationService = referralLocationService;
     }
 
