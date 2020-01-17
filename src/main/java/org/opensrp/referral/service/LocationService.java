@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class LocationService extends OpenmrsLocationService {
@@ -96,9 +95,13 @@ public class LocationService extends OpenmrsLocationService {
 
     public List<Location> getCouncilFacilities(String uuid, List<Location> allLocations) {
 
-        List<Location> filteredList = allLocations.stream()
-                .filter(location -> location.getLocationId().contains(uuid))
-                .collect(Collectors.toList());
+        List<Location> filteredList =  new ArrayList<>();
+        for (Location allLocation : allLocations) {
+            if (allLocation.getLocationId().contains(uuid)) {
+                filteredList.add(allLocation);
+            }
+        }
+
         Location location;
 
         if (!filteredList.isEmpty()) {
