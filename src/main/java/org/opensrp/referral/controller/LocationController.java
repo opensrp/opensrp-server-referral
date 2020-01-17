@@ -2,7 +2,7 @@ package org.opensrp.referral.controller;
 
 import com.google.gson.Gson;
 import org.json.JSONException;
-import org.opensrp.referral.service.LocationService;
+import org.opensrp.referral.service.ReferralLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/location/")
 public class LocationController {
 
-    private LocationService locationService;
+    private ReferralLocationService referralLocationService;
 
     @Autowired
-    public LocationController(LocationService locationService) {
-        this.locationService = locationService;
+    public LocationController(ReferralLocationService referralLocationService) {
+        this.referralLocationService = referralLocationService;
     }
 
 
@@ -33,7 +33,7 @@ public class LocationController {
     @RequestMapping("facilities/{uuid}")
     @ResponseBody
     public ResponseEntity<String> getFacilitiesWithinACouncil(@PathVariable("uuid") final String uuid) throws JSONException {
-        return new ResponseEntity<>(new Gson().toJson(locationService.getHealthFacilityLocationsInCouncil(uuid)), HttpStatus.OK);
+        return new ResponseEntity<>(new Gson().toJson(referralLocationService.getHealthFacilityLocationsInCouncil(uuid)), HttpStatus.OK);
     }
 
 }
