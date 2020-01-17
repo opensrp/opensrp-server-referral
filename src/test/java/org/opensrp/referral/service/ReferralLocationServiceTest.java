@@ -23,7 +23,7 @@ public class ReferralLocationServiceTest {
 
     @Before
     public void setUp() {
-        referralLocationService = new ReferralLocationService("https://demo.openmrs.org/openmrs","admin","Admin123");
+        referralLocationService = new ReferralLocationService("https://openmrs.boresha-afya-stage.smartregister.org/openmrs","admin","Admin123");
     }
 
     @Test

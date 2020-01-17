@@ -32,7 +32,7 @@ public class ReferralLocationService extends OpenmrsLocationService {
     public List<Location> getHealthFacilityLocationsInCouncil(String uuid) throws JSONException {
         List<Location> allLocationsList = getAllLocations();
         String locationsJson = new Gson().toJson(allLocationsList);
-        logger.error(locationsJson);
+        logger.info(locationsJson);
         return getCouncilFacilities(uuid, allLocationsList);
     }
 
@@ -116,7 +116,7 @@ public class ReferralLocationService extends OpenmrsLocationService {
         if (location.getTags().contains(AllowedTags.VILLAGE.toString()) || location.getTags().contains(
                 AllowedTags.WARD.toString()) || location.getTags().contains(AllowedTags.FACILITY.toString())) {
             return getCouncilFacilities(location.getParentLocation().getLocationId(), allLocations);
-        } else if (location.getTags().contains(AllowedTags.COUNCIL.toString())) {
+        } else if (location.getTags().contains(AllowedTags.COUNCIL.toString()) || location.getTags().contains(AllowedTags.DISTRICT.toString())) {
             return getFacilitiesByCouncilId(location.getLocationId(), allLocations);
         } else {
             return new ArrayList<>();
@@ -144,6 +144,7 @@ public class ReferralLocationService extends OpenmrsLocationService {
         ZONE("Zone"),
         REGION("Region"),
         COUNCIL("Council"),
+        DISTRICT("District"),
         WARD("Ward"),
         VILLAGE("Village"),
         FACILITY("Facility");
