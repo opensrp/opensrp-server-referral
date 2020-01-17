@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class LocationService extends OpenmrsLocationService {
+public class ReferralLocationService extends OpenmrsLocationService {
 
     private static Logger logger = LoggerFactory.getLogger(OpenmrsLocationService.class);
 
-    public LocationService(String openmrsUrl, String user, String password) {
+    public ReferralLocationService(String openmrsUrl, String user, String password) {
         super(openmrsUrl, user, password);
     }
 
@@ -125,7 +125,7 @@ public class LocationService extends OpenmrsLocationService {
         List<Location> facilitiesLocations = new ArrayList<>();
         for (Location location : allLocations) {
             try {
-                if (location.getParentLocation().getLocationId().equals(uuid) && location.getTags().contains(LocationService.AllowedTags.FACILITY.toString())) {
+                if (location.getParentLocation().getLocationId().equals(uuid) && location.getTags().contains(ReferralLocationService.AllowedTags.FACILITY.toString())) {
                     facilitiesLocations.add(location);
                 }
             } catch (NullPointerException e) {
