@@ -13,6 +13,7 @@ import org.opensrp.connector.openmrs.service.OpenmrsLocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(JUnit4.class)
@@ -23,7 +24,7 @@ public class ReferralLocationServiceTest {
 
     @Before
     public void setUp() {
-        referralLocationService = new ReferralLocationService("https://demo.openmrs.org/openmrs","admin","Admin123");
+        referralLocationService = new ReferralLocationService("https://demo.openmrs.org/openmrs", "admin", "Admin123");
     }
 
     @Test
@@ -44,7 +45,8 @@ public class ReferralLocationServiceTest {
     @Test
     public void getAllLocations() {
         try {
-            Assert.assertFalse(referralLocationService.getAllLocations().isEmpty());
+            List<Location> locations = new ArrayList<>();
+            Assert.assertFalse(referralLocationService.getAllLocations(locations, 0).isEmpty());
         } catch (JSONException e) {
             logger.error(e.getMessage());
         }
