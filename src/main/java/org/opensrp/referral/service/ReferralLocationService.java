@@ -30,28 +30,28 @@ public class ReferralLocationService extends OpenmrsLocationService {
     }
 
     public List<Location> getHealthFacilityLocationsInCouncil(String uuid) throws JSONException {
-        List<Location> allLocationsList = getAllLocations();
+        List<Location> allLocationsList = new ArrayList<>();
+        allLocationsList = getAllLocations(allLocationsList,0);
         String locationsJson = new Gson().toJson(allLocationsList);
         logger.error(locationsJson);
         return getCouncilFacilities(uuid, allLocationsList);
     }
 
-    public List<Location> getAllLocations() throws JSONException {
+    public List<Location> getAllLocations(List<Location> locationList, int startIndex) throws JSONException {
         String response = this.obtainURL(HttpUtil.removeEndingSlash(this.OPENMRS_BASE_URL) + "/" + "ws/rest/v1/location" +
-                "?v=custom:(uuid,display,name,tags:(uuid,display),parentLocation:(uuid,display),attributes)");
+                "?v=custom:(uuid,display,name,tags:(uuid,display),parentLocation:(uuid,display),attributes)&limit=100&startIndex="+startIndex);
 
         logger.info("response received : {} ", response);
 
         if (!StringUtils.isEmptyOrWhitespaceOnly(response) && (new JSONObject(response)).has("results")) {
-            List<Location> allLocations = new ArrayList<>();
             JSONArray results = new JSONObject(response).getJSONArray("results");
             for (int i = 0; i < results.length(); i++) {
-                allLocations.add(formLocation(results.getJSONObject(i).toString()));
+                locationList.add(formLocation(results.getJSONObject(i).toString()));
             }
-            return allLocations;
+            return getAllLocations(locationList,startIndex+100);
 
         }
-        return new ArrayList<>();
+        return  locationList;
     }
 
     private String obtainURL(String url) {
