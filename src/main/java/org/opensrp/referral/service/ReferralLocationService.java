@@ -33,7 +33,7 @@ public class ReferralLocationService extends OpenmrsLocationService {
         List<Location> allLocationsList = new ArrayList<>();
         allLocationsList = getAllLocations(allLocationsList,0);
         String locationsJson = new Gson().toJson(allLocationsList);
-        logger.error(locationsJson);
+        logger.info(locationsJson);
         return getCouncilFacilities(uuid, allLocationsList);
     }
 
