@@ -33,7 +33,7 @@ public class ReferralLocationController {
     @RequestMapping("facilities/{uuid}")
     @ResponseBody
     public ResponseEntity<String> getFacilitiesWithinACouncil(@PathVariable("uuid") final String uuid) throws JSONException {
-        return new ResponseEntity<>(new Gson().toJson(referralLocationService.getHealthFacilityLocationsInCouncil(uuid)), HttpStatus.OK);
+        return new ResponseEntity<>(new Gson().toJson(referralLocationService.getLocationsWithinAHierarchyLevel(uuid)), HttpStatus.OK);
     }
 
 }

@@ -29,20 +29,18 @@ public class ReferralLocationService extends OpenmrsLocationService {
         super(openmrsUrl, user, password);
     }
 
-    public List<Location> getHealthFacilityLocationsInCouncil(String uuid) throws JSONException {
+    public List<Location> getLocationsWithinAHierarchyLevel(String uuid, String locationTopLevel, JSONArray allowedTags, JSONArray locationTagsQueried) throws JSONException {
         List<Location> allLocationsList = new ArrayList<>();
         allLocationsList = getAllLocations(allLocationsList,0);
         String locationsJson = new Gson().toJson(allLocationsList);
         logger.info(locationsJson);
-        return getCouncilFacilities(uuid, allLocationsList);
+        return getLocationsByTagsAndHierarchyLevel(uuid, allLocationsList,locationTopLevel,allowedTags,locationTagsQueried);
     }
 
     public List<Location> getAllLocations(List<Location> locationList, int startIndex) throws JSONException {
         String response = this.obtainURL(HttpUtil.removeEndingSlash(this.OPENMRS_BASE_URL) + "/" + "ws/rest/v1/location" +
                 "?v=custom:(uuid,display,name,tags:(uuid,display),parentLocation:(uuid,display),attributes)&limit=100&startIndex="+startIndex);
-
         logger.info("response received : {} ", response);
-
         if (!StringUtils.isEmptyOrWhitespaceOnly(response) && (new JSONObject(response)).has("results")) {
             JSONArray results = new JSONObject(response).getJSONArray("results");
             for (int i = 0; i < results.length(); i++) {
@@ -96,7 +94,7 @@ public class ReferralLocationService extends OpenmrsLocationService {
         return location;
     }
 
-    public List<Location> getCouncilFacilities(String uuid, List<Location> allLocations) {
+    public List<Location> getLocationsByTagsAndHierarchyLevel(String uuid, List<Location> allLocations, String locationTopLevel, JSONArray allowedTags, JSONArray locationTagsQueried) {
 
         List<Location> filteredList = new ArrayList<>();
         for (Location allLocation : allLocations) {
@@ -113,50 +111,39 @@ public class ReferralLocationService extends OpenmrsLocationService {
             return new ArrayList<>();
         }
 
-        if (location.getTags().contains(AllowedTags.VILLAGE.toString()) || location.getTags().contains(
-                AllowedTags.WARD.toString()) || location.getTags().contains(AllowedTags.FACILITY.toString())) {
-            return getCouncilFacilities(location.getParentLocation().getLocationId(), allLocations);
-        } else if (location.getTags().contains(AllowedTags.COUNCIL.toString())) {
-            return getFacilitiesByCouncilId(location.getLocationId(), allLocations);
+        for(int i=0;i<allowedTags.length();i++){
+            try {
+                if (location.getTags().contains(allowedTags.getString(0))) {
+                    return getLocationsByTagsAndHierarchyLevel(location.getParentLocation().getLocationId(), allLocations,locationTopLevel,allowedTags,locationTagsQueried);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (location.getTags().contains(locationTopLevel)) {
+            return getLocationsByTopLocationLevelId(location.getLocationId(), allLocations,locationTagsQueried);
         } else {
             return new ArrayList<>();
         }
     }
 
 
-    private List<Location> getFacilitiesByCouncilId(String uuid, List<Location> allLocations) {
-        List<Location> facilitiesLocations = new ArrayList<>();
+    private List<Location> getLocationsByTopLocationLevelId(String uuid, List<Location> allLocations,JSONArray locationTagsQueried) {
+        List<Location> queriedLocations = new ArrayList<>();
         for (Location location : allLocations) {
-            try {
-                if (location.getParentLocation().getLocationId().equals(uuid) && location.getTags().contains(ReferralLocationService.AllowedTags.FACILITY.toString())) {
-                    facilitiesLocations.add(location);
+            for(int i=0;i<locationTagsQueried.length();i++){
+                try {
+                    if (location.getParentLocation().getLocationId().equals(uuid) && location.getTags().contains(locationTagsQueried.getString(i))) {
+                        queriedLocations.add(location);
+                    }
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
                 }
-            } catch (NullPointerException e) {
-                logger.error(e.getMessage());
             }
+
         }
 
-        return facilitiesLocations;
-    }
-
-    public enum AllowedTags {
-        COUNTRY("Country"),
-        ZONE("Zone"),
-        REGION("Region"),
-        COUNCIL("Council"),
-        WARD("Ward"),
-        VILLAGE("Village"),
-        FACILITY("Facility");
-
-        private final String display;
-
-        AllowedTags(String display) {
-            this.display = display;
-        }
-
-        @Override
-        public String toString() {
-            return this.display;
-        }
+        return queriedLocations;
     }
 }
