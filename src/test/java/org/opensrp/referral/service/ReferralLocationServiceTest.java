@@ -43,7 +43,7 @@ public class ReferralLocationServiceTest {
                     "  \"Zone\",\n" +
                     "  \"Council\",\n" +
                     "  \"Ward\",\n" +
-                    "  \"Health Facility\",\n" +
+                    "  \"Facility\",\n" +
                     "  \"Village\"\n" +
                     "]");
         } catch (JSONException e) {

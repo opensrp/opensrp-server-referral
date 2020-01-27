@@ -113,7 +113,7 @@ public class ReferralLocationService extends OpenmrsLocationService {
 
         for(int i=0;i<allowedTags.length();i++){
             try {
-                if (location.getTags().contains(allowedTags.getString(0))) {
+                if (location.getTags().contains(allowedTags.getString(i)) && !allowedTags.getString(i).equals(locationTopLevel)) {
                     return getLocationsByTagsAndHierarchyLevel(location.getParentLocation().getLocationId(), allLocations,locationTopLevel,allowedTags,locationTagsQueried);
                 }
             } catch (JSONException e) {
