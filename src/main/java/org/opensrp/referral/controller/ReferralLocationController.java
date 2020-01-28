@@ -31,17 +31,15 @@ public class ReferralLocationController {
      * This method receives the uuid of a facility location that team member (chw) is tied up to
      * or a uuid of a village that team member is serving and return a list of all other facilities within the district/council of the uuid
      * @param  jsonObject object containing
-     *              locationUUID of any location within the hierarchy level within the a hierarchy,
+     *              locationUUID ,string of any location within the hierarchy level within the a hierarchy,
      *              locationTopLevel, string of the tag name of top location hierarchy,
      *              allowedTags, a jsonArray containing TAGS in the location hierarchy,
-     *              locationTagsQueried, a jsonArray of containing locations to be returned
+     *              locationTagsQueried, a jsonArray of containing tags of locations to be returned
      * @return List of all facilities within the same hierarchy level.
      */
 
     @RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "locations/getLocationsByTags")
     public ResponseEntity<String> getFacilitiesWithinACouncil(@RequestBody JSONObject jsonObject) throws JSONException {
-
-
         return new ResponseEntity<>(new Gson().toJson(
                 referralLocationService.getLocationsWithinAHierarchyLevel(
                         jsonObject.getString("locationUUID"),
