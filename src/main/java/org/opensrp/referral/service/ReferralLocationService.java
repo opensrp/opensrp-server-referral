@@ -94,6 +94,23 @@ public class ReferralLocationService extends OpenmrsLocationService {
         return location;
     }
 
+    /**
+     * This method is used to obtain locations within a hierarchy level by passing the following parameters
+     * @param uuid a uuid of a location within the hierarchy level, this is used for transversing to the top location level stated below
+     * @param allLocations this is a list of all locations obtained from OpenMRS
+     * @param locationTopLevel this defines the top most level that locations to be querried from
+     *                         e.g
+     *                         1. for obtaining all locations within a district this value would contain the tag name
+     *                         district locations
+     *                         2. for obtaining all locations within a region this value would contain the tag name for
+     *                         region locations
+     *
+     * @param allowedTags this defines all the tags used in a specific implementations location hierarchy
+     * @param locationTagsQueried this defines the tags of all the locations to be returned
+     *                            e.g for obtaining all villages this json array would contain the tag name for village locations
+     *                            for villages and health facilities, this json array would contain both tag names
+     * @return returns a list of all locations matching the above criteria
+     */
     public List<Location> getLocationsByTagsAndHierarchyLevel(String uuid, List<Location> allLocations, String locationTopLevel, JSONArray allowedTags, JSONArray locationTagsQueried) {
         List<Location> filteredList = new ArrayList<>();
         for (Location allLocation : allLocations) {
@@ -116,22 +133,21 @@ public class ReferralLocationService extends OpenmrsLocationService {
                     return getLocationsByTagsAndHierarchyLevel(location.getParentLocation().getLocationId(), allLocations,locationTopLevel,allowedTags,locationTagsQueried);
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
         }
 
         if (location.getTags().contains(locationTopLevel)) {
-            return getChildLocationsTreeByTags(location.getLocationId(), allLocations,locationTagsQueried);
+            return getChildLocationsTreeByTagsAndParentLocationUUID(location.getLocationId(), allLocations,locationTagsQueried);
         } else {
             return new ArrayList<>();
         }
     }
 
-    private List<Location> getChildLocationsTreeByTags(String parentUUID, List<Location> allLocations,JSONArray locationTagsQueried) {
+
+    private List<Location> getChildLocationsTreeByTagsAndParentLocationUUID(String parentUUID, List<Location> allLocations,JSONArray locationTagsQueried) {
         List<Location> obtainedLocations = new ArrayList<>();
         for (Location location : allLocations) {
-            String locationName = location.getName();
-           System.out.println("location name = "+locationName);
             for(int i=0;i<locationTagsQueried.length();i++){
                 try {
                     if (location.getParentLocation().getLocationId().equals(parentUUID) && location.getTags().contains(locationTagsQueried.getString(i))) {
@@ -144,10 +160,10 @@ public class ReferralLocationService extends OpenmrsLocationService {
 
             try {
                 if (location.getParentLocation().getLocationId().equals(parentUUID)) {
-                    obtainedLocations.addAll(getChildLocationsTreeByTags(location.getLocationId(), allLocations, locationTagsQueried));
+                    obtainedLocations.addAll(getChildLocationsTreeByTagsAndParentLocationUUID(location.getLocationId(), allLocations, locationTagsQueried));
                 }
             }catch (NullPointerException e){
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
         }
         return obtainedLocations;

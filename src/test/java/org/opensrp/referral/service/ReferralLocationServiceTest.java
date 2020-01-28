@@ -53,8 +53,7 @@ public class ReferralLocationServiceTest {
         JSONArray locationTagsQueried = null;
         try {
             locationTagsQueried = new JSONArray("[\n" +
-                    "  \"Facility\",\n" +
-                    "  \"Village\"\n" +
+                    "  \"Facility\"\n" +
                     "]");
         } catch (JSONException e) {
             e.printStackTrace();
