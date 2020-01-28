@@ -3,6 +3,7 @@ package org.opensrp.referral.service;
 import com.google.gson.Gson;
 import com.mysql.jdbc.StringUtils;
 import com.squareup.okhttp.*;
+import org.apache.ibatis.jdbc.Null;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,8 +23,7 @@ public class ReferralLocationService extends OpenmrsLocationService {
 
     private static Logger logger = LoggerFactory.getLogger(OpenmrsLocationService.class);
 
-    public ReferralLocationService() {
-    }
+    public ReferralLocationService() {}
 
     public ReferralLocationService(String openmrsUrl, String user, String password) {
         super(openmrsUrl, user, password);
@@ -95,7 +95,6 @@ public class ReferralLocationService extends OpenmrsLocationService {
     }
 
     public List<Location> getLocationsByTagsAndHierarchyLevel(String uuid, List<Location> allLocations, String locationTopLevel, JSONArray allowedTags, JSONArray locationTagsQueried) {
-
         List<Location> filteredList = new ArrayList<>();
         for (Location allLocation : allLocations) {
             if (allLocation.getLocationId().contains(uuid)) {
@@ -122,28 +121,35 @@ public class ReferralLocationService extends OpenmrsLocationService {
         }
 
         if (location.getTags().contains(locationTopLevel)) {
-            return getLocationsByTopLocationLevelId(location.getLocationId(), allLocations,locationTagsQueried);
+            return getChildLocationsTreeByTags(location.getLocationId(), allLocations,locationTagsQueried);
         } else {
             return new ArrayList<>();
         }
     }
 
-
-    private List<Location> getLocationsByTopLocationLevelId(String uuid, List<Location> allLocations,JSONArray locationTagsQueried) {
-        List<Location> queriedLocations = new ArrayList<>();
+    private List<Location> getChildLocationsTreeByTags(String parentUUID, List<Location> allLocations,JSONArray locationTagsQueried) {
+        List<Location> obtainedLocations = new ArrayList<>();
         for (Location location : allLocations) {
+            String locationName = location.getName();
+           System.out.println("location name = "+locationName);
             for(int i=0;i<locationTagsQueried.length();i++){
                 try {
-                    if (location.getParentLocation().getLocationId().equals(uuid) && location.getTags().contains(locationTagsQueried.getString(i))) {
-                        queriedLocations.add(location);
+                    if (location.getParentLocation().getLocationId().equals(parentUUID) && location.getTags().contains(locationTagsQueried.getString(i))) {
+                        obtainedLocations.add(location);
                     }
                 } catch (Exception e) {
                     logger.error(e.getMessage());
                 }
             }
 
+            try {
+                if (location.getParentLocation().getLocationId().equals(parentUUID)) {
+                    obtainedLocations.addAll(getChildLocationsTreeByTags(location.getLocationId(), allLocations, locationTagsQueried));
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
         }
-
-        return queriedLocations;
+        return obtainedLocations;
     }
 }
