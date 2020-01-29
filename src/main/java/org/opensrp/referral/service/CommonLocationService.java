@@ -23,8 +23,6 @@ public class CommonLocationService extends OpenmrsLocationService {
 
     private static Logger logger = LoggerFactory.getLogger(OpenmrsLocationService.class);
 
-    public CommonLocationService() {}
-
     public CommonLocationService(String openmrsUrl, String user, String password) {
         super(openmrsUrl, user, password);
     }
