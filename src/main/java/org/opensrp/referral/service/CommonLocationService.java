@@ -19,13 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ReferralLocationService extends OpenmrsLocationService {
+public class CommonLocationService extends OpenmrsLocationService {
 
     private static Logger logger = LoggerFactory.getLogger(OpenmrsLocationService.class);
 
-    public ReferralLocationService() {}
+    public CommonLocationService() {}
 
-    public ReferralLocationService(String openmrsUrl, String user, String password) {
+    public CommonLocationService(String openmrsUrl, String user, String password) {
         super(openmrsUrl, user, password);
     }
 

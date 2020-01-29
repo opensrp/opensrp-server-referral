@@ -3,27 +3,25 @@ package org.opensrp.referral.controller;
 import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.opensrp.referral.service.ReferralLocationService;
+import org.opensrp.referral.service.CommonLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/location/")
-public class ReferralLocationController {
+public class CommonLocationController {
 
-    private ReferralLocationService referralLocationService;
+    private CommonLocationService commonLocationService;
 
     @Autowired
-    public ReferralLocationController(ReferralLocationService referralLocationService) {
-        this.referralLocationService = referralLocationService;
+    public CommonLocationController(CommonLocationService commonLocationService) {
+        this.commonLocationService = commonLocationService;
     }
 
 
@@ -41,7 +39,7 @@ public class ReferralLocationController {
     @RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "locations/getLocationsByTags")
     public ResponseEntity<String> getFacilitiesWithinACouncil(@RequestBody JSONObject jsonObject) throws JSONException {
         return new ResponseEntity<>(new Gson().toJson(
-                referralLocationService.getLocationsWithinAHierarchyLevel(
+                commonLocationService.getLocationsWithinAHierarchyLevel(
                         jsonObject.getString("locationUUID"),
                         jsonObject.getString("locationTopLevel"),
                         jsonObject.getJSONArray("allowedTags"),

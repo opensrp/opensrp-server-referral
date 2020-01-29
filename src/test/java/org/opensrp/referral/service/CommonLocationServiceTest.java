@@ -18,14 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(JUnit4.class)
-public class ReferralLocationServiceTest {
+public class CommonLocationServiceTest {
 
     private static Logger logger = LoggerFactory.getLogger(OpenmrsLocationService.class);
-    private ReferralLocationService referralLocationService;
+    private CommonLocationService commonLocationService;
 
     @Before
     public void setUp() {
-        referralLocationService = new ReferralLocationService("https://demo.openmrs.org/openmrs", "admin", "Admin123");
+        commonLocationService = new CommonLocationService("https://demo.openmrs.org/openmrs", "admin", "Admin123");
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ReferralLocationServiceTest {
 
         String locationTopLevel = "Council";
 
-        List<Location> councilFacilities = referralLocationService.getLocationsByTagsAndHierarchyLevel("25820e25-76c5-455a-812d-0934db2564f5", allLocations,locationTopLevel,allowedTags,locationTagsQueried);
+        List<Location> councilFacilities = commonLocationService.getLocationsByTagsAndHierarchyLevel("25820e25-76c5-455a-812d-0934db2564f5", allLocations,locationTopLevel,allowedTags,locationTagsQueried);
 
         Assert.assertEquals(3, councilFacilities.size());
         Assert.assertEquals("Ebrahim Haji", councilFacilities.get(0).getName());
@@ -73,7 +73,7 @@ public class ReferralLocationServiceTest {
     public void getAllLocations() {
         try {
             List<Location> locations = new ArrayList<>();
-            Assert.assertFalse(referralLocationService.getAllLocations(locations, 0).isEmpty());
+            Assert.assertFalse(commonLocationService.getAllLocations(locations, 0).isEmpty());
         } catch (JSONException e) {
             logger.error(e.getMessage());
         }
