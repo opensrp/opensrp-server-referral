@@ -109,19 +109,15 @@ public class CommonLocationService extends OpenmrsLocationService {
      * @return returns a list of all locations matching the above criteria
      */
     public List<Location> getLocationsByTagsAndHierarchyLevel(String uuid, List<Location> allLocations, String locationTopLevel,  JSONArray locationTagsQueried) {
-        List<Location> filteredList = new ArrayList<>();
+        Location location=null;
         for (Location allLocation : allLocations) {
             if (allLocation.getLocationId().equals(uuid)) {
-                filteredList.add(allLocation);
+                location = allLocation;
                 break;
             }
         }
 
-        Location location;
-
-        if (!filteredList.isEmpty()) {
-            location = filteredList.get(0);
-        } else {
+        if (location==null) {
             return new ArrayList<>();
         }
 
