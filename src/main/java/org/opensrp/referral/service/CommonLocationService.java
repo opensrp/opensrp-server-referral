@@ -111,8 +111,9 @@ public class CommonLocationService extends OpenmrsLocationService {
     public List<Location> getLocationsByTagsAndHierarchyLevel(String uuid, List<Location> allLocations, String locationTopLevel,  JSONArray locationTagsQueried) {
         List<Location> filteredList = new ArrayList<>();
         for (Location allLocation : allLocations) {
-            if (allLocation.getLocationId().contains(uuid)) {
+            if (allLocation.getLocationId().equals(uuid)) {
                 filteredList.add(allLocation);
+                break;
             }
         }
 
