@@ -27,12 +27,12 @@ public class CommonLocationService extends OpenmrsLocationService {
         super(openmrsUrl, user, password);
     }
 
-    public List<Location> getLocationsWithinAHierarchyLevel(String uuid, String locationTopLevel, JSONArray locationHierarchy, JSONArray locationTagsQueried) throws JSONException {
+    public List<Location> getLocationsWithinAHierarchyLevel(String uuid, String locationTopLevel, JSONArray locationTagsQueried) throws JSONException {
         List<Location> allLocationsList = new ArrayList<>();
         allLocationsList = getAllLocations(allLocationsList,0);
         String locationsJson = new Gson().toJson(allLocationsList);
         logger.info(locationsJson);
-        return getLocationsByTagsAndHierarchyLevel(uuid, allLocationsList,locationTopLevel,locationHierarchy,locationTagsQueried);
+        return getLocationsByTagsAndHierarchyLevel(uuid, allLocationsList,locationTopLevel,locationTagsQueried);
     }
 
     public List<Location> getAllLocations(List<Location> locationList, int startIndex) throws JSONException {
@@ -103,13 +103,12 @@ public class CommonLocationService extends OpenmrsLocationService {
      *                         2. for obtaining all locations within a region this value would contain the tag name for
      *                         region locations
      *
-     * @param locationHierarchy this defines all the tags used in a specific implementations location hierarchy
      * @param locationTagsQueried this defines the tags of all the locations to be returned
      *                            e.g for obtaining all villages this json array would contain the tag name for village locations
      *                            for villages and health facilities, this json array would contain both tag names
      * @return returns a list of all locations matching the above criteria
      */
-    public List<Location> getLocationsByTagsAndHierarchyLevel(String uuid, List<Location> allLocations, String locationTopLevel, JSONArray locationHierarchy, JSONArray locationTagsQueried) {
+    public List<Location> getLocationsByTagsAndHierarchyLevel(String uuid, List<Location> allLocations, String locationTopLevel,  JSONArray locationTagsQueried) {
         List<Location> filteredList = new ArrayList<>();
         for (Location allLocation : allLocations) {
             if (allLocation.getLocationId().contains(uuid)) {
@@ -125,14 +124,8 @@ public class CommonLocationService extends OpenmrsLocationService {
             return new ArrayList<>();
         }
 
-        for(int i=0;i<locationHierarchy.length();i++){
-            try {
-                if (location.getTags().contains(locationHierarchy.getString(i)) && !locationHierarchy.getString(i).equals(locationTopLevel)) {
-                    return getLocationsByTagsAndHierarchyLevel(location.getParentLocation().getLocationId(), allLocations,locationTopLevel,locationHierarchy,locationTagsQueried);
-                }
-            } catch (JSONException e) {
-                logger.error(e.getMessage());
-            }
+        if (!location.getTags().contains(locationTopLevel)) {
+            return getLocationsByTagsAndHierarchyLevel(location.getParentLocation().getLocationId(), allLocations,locationTopLevel,locationTagsQueried);
         }
 
         if (location.getTags().contains(locationTopLevel)) {

@@ -31,7 +31,6 @@ public class CommonLocationController {
      * @param  jsonObject object containing
      *              locationUUID ,string of any location within the hierarchy level within the a hierarchy,
      *              locationTopLevel, string of the tag name of top location hierarchy level to query locations from,
-     *              locationHierarchy, a jsonArray containing TAGS in the location hierarchy,
      *              locationTagsQueried, a jsonArray of containing tags of locations to be returned
      * @return List of all facilities within the same hierarchy level.
      */
@@ -42,7 +41,6 @@ public class CommonLocationController {
                 commonLocationService.getLocationsWithinAHierarchyLevel(
                         jsonObject.getString("locationUUID"),
                         jsonObject.getString("locationTopLevel"),
-                        jsonObject.getJSONArray("locationHierarchy"),
                         jsonObject.getJSONArray("locationTagsQueried")
                 )
         ), HttpStatus.OK);

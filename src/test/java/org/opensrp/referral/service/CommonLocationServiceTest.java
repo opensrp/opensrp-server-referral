@@ -34,20 +34,6 @@ public class CommonLocationServiceTest {
         List<Location> allLocations = new Gson().fromJson(locationJson, new TypeToken<List<Location>>() {
         }.getType());
 
-        JSONArray allowedTags = null;
-        try {
-            allowedTags = new JSONArray("[\n" +
-                    "  \"Country\",\n" +
-                    "  \"Region\",\n" +
-                    "  \"Zone\",\n" +
-                    "  \"Council\",\n" +
-                    "  \"Ward\",\n" +
-                    "  \"Facility\",\n" +
-                    "  \"Village\"\n" +
-                    "]");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
         JSONArray locationTagsQueried = null;
         try {
@@ -60,7 +46,7 @@ public class CommonLocationServiceTest {
 
         String locationTopLevel = "Council";
 
-        List<Location> councilFacilities = commonLocationService.getLocationsByTagsAndHierarchyLevel("25820e25-76c5-455a-812d-0934db2564f5", allLocations,locationTopLevel,allowedTags,locationTagsQueried);
+        List<Location> councilFacilities = commonLocationService.getLocationsByTagsAndHierarchyLevel("25820e25-76c5-455a-812d-0934db2564f5", allLocations,locationTopLevel,locationTagsQueried);
 
         Assert.assertEquals(3, councilFacilities.size());
         Assert.assertEquals("Ebrahim Haji", councilFacilities.get(0).getName());
