@@ -24,10 +24,11 @@ public class ClientReferralController {
 
     /**
      * Sample test to use as placeholder. Will delete this with actual implementations
+     *
      * @return Stringified JSON response
      * @throws JSONException Exception thrown
      */
-    @RequestMapping( method = GET, value = "referral/test")
+    @RequestMapping(method = GET, value = "referral/test")
     public ResponseEntity<String> getLocationsWithinALevelAndTags() throws JSONException {
         return new ResponseEntity<>(clientReferralService.testReferralService().toString(), HttpStatus.OK);
     }
